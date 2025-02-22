@@ -1,0 +1,291 @@
+---
+title: "FinalAssignment"
+date: '2023-10-16'
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+if (!require("DT")) install.packages('DT')
+if (!require("MVA")) install.packages('MVA')
+if (!require("sf")) install.packages('sf')
+if (!require("rnaturalearth")) install.packages('rnaturalearth')
+if (!require("ggspatial")) install.packages('ggspatial')
+if (!require("ggmosaic")) install.packages('ggmosaic')
+```
+
+
+```{r}
+library(DT)
+library(dplyr)
+library("PerformanceAnalytics")
+library(tools) #throws error below for library(MVA) call without tools package
+library(MVA)
+library("ggplot2")
+library("sf")
+library("rnaturalearth")
+library("rnaturalearthdata")
+library(ggplot2)
+library(gridExtra)
+library(dplyr)
+library(GGally)
+library(MASS)
+library(cowplot)
+library(ggpubr)
+library("ggspatial")
+library(factoextra)
+library(FactoMineR)
+library(klaR)
+library(stringr)
+library(ggmosaic)
+```
+
+
+
+
+As the 'kind' data column shows that all the data samples of salmon are 'Farmed' we removed this variable as it is not useful and doesn't provide any insight into the data as the column variance is 0. 
+
+```{r}
+farmedSalmonAll <- data.frame(read.csv('farmedSalmon.csv', header = TRUE))
+farmedSalmonAll <- farmedSalmonAll[,-1]
+farmedSalmon <- na.omit(farmedSalmonAll)
+```
+
+
+The variables were then examined finding that Total.Pesticides and Total.PCB were sums of other variables in the dataset and did not proide any unique insight into the variance of the data set. These variables were therefore removed leaving 9 contaminants: Mirex, Hexachlorobenzene, HCH_gamma, Heptachlor.Epoxide, Dieldrin, Endrin, Total.Chlordane, Total.DDT, Dioxin. 
+
+
+```{r}
+head(farmedSalmon)
+```
+
+
+
+
+```{r}
+farmedSalmon <- farmedSalmon[,c(-11, -12)]
+chart.Correlation(farmedSalmon[,-1], histogram=TRUE, pch=19)
+```
+
+
+### Country based PCA
+```{r}
+salmon_pca <- princomp(farmedSalmon[,c(-1,-11)], cor = TRUE)
+#summary(salmon_pca,loadings = TRUE)
+
+screeplot(salmon_pca)
+lines(x=seq(0,14), y=rep(1,15), col="red")
+```
+
+The resulting PCA graph of all 8 different countries of origion as shown below does not seperate the data well. Due to the large amount of countries/pca eclipses on the plot there is significant overlapping which doesn't allow for much interpretation. 
+
+
+```{r}
+farmedSalmonPCA = PCA(farmedSalmon[,-1], scale.unit = TRUE, ncp=5, quali.sup = c(1), graph = T)
+fviz_pca_ind(farmedSalmonPCA, geom.ind = "point", col.ind = farmedSalmon$Location, addEllipses = TRUE, title= 'Country PCA')
+```
+
+
+
+
+
+
+
+
+
+### Geographic similarity check 
+
+```{r}
+theme_set(theme_bw())
+world <- ne_countries(scale = "medium", returnclass = "sf")
+```
+
+```{r}
+#Country plot data
+Locations <- c('Western Canada', 'Eastern Canada', 'Maine', 'Washington', 'Faroe Islands', 'Scotland', 'Norway', 'Chile')
+Latitude <- c(51.0405, 47.1872, 45.367584, 47.751076, 61.505070, 56.4907, 60.4720, -35.6751)
+Longitude <- c(-114.0728, -70.1354, -68.972168, -120.740135, -6.769180, -4.2026, 8.4689, -71.5430)
+Region <- c('North America', 'North America', 'North America', 'North America', 'Europe', 'Europe', 'Europe', 'South America')
+mapLocations <- data.frame(Locations, Latitude, Longitude, Region)
+```
+
+
+
+```{r fig.height=6, fig.width=8}
+ggplot(data = world) +
+    geom_sf(fill = 'antiquewhite') +
+    annotation_scale(location = "bl", width_hint = 0.5) +
+    coord_sf(xlim = c(-140, 35), ylim = c(-70, 70), expand = FALSE) + 
+    geom_point(
+      data = mapLocations,
+      aes(Longitude, Latitude, color = Region),
+      size = 7,
+      alpha = 0.6)+
+    geom_text(data = mapLocations, aes(Longitude, Latitude, label = Locations), size = 2.5) +
+    theme(panel.grid.major = element_line(color = gray(.9), linetype = 'dashed', size = 0.5), panel.background = element_rect(fill = 'aliceblue')) +
+    xlab("Longitude") + 
+    ylab("Latitude") +
+    ggtitle("Salmon farming locations")
+```
+The above plot showed significant clustering of the countries geographical locations. As contaminent(pesticide) levels in salmon are mainly due to the environment they are farmed in. The geography/location of the salmon farm should therefore influence the contaminants. Countries geographically close should have similar contamanent levels. 
+
+The PCA based on region is explored in the next section
+
+
+
+### Region based analysis
+
+The data was then expanded to include a region column which would identify which region a county was from in the world plot above. Either Region 1, Region 2 or Region 3. 
+
+
+
+```{r}
+farmedSalmon$Region <- NA
+
+#Grouping the countries into regions based on locationn
+for (i in 1:150){
+  if (farmedSalmon[i,]$Location %in% c('Western Canada', 'Eastern Canada', 'Maine', 'Washington')){
+    farmedSalmon[i,]$Region = 'North America'
+  }
+  
+  if (farmedSalmon[i,]$Location %in% c('Faroe Islands', 'Scotland', 'Norway')){
+    farmedSalmon[i,]$Region = 'Europe'
+  }
+  
+  if (farmedSalmon[i,]$Location == 'Chile'){
+    farmedSalmon[i,]$Region = 'South America '
+  }
+}
+```
+
+
+```{r fig.height=10, fig.width=10}
+farmedSalmonPCA = PCA(farmedSalmon[,c(-1,-11)], scale.unit = TRUE, ncp=5, quali.sup = c(1), graph = F)
+fviz_pca_ind(farmedSalmonPCA, geom.ind = "point", col.ind = farmedSalmon$Region, addEllipses = TRUE, title= 'Regional PCA')
+#farmedSalmonPCA$eig
+#farmedSalmonPCA$var
+```
+
+    
+```{r}
+#IMPORTANT: .data[[]] is used it allows data from the global environment to be viable to the dplyr plot aes function 
+contaminantDplot <- function(data, x_var) {
+  ggplot(data, mapping = aes(x = .data[[x_var]], color = Region, fill = Region)) +
+    geom_density(alpha = 0.5)
+}
+```
+
+```{r}
+Contaminants = c("Mirex", "Hexachlorobenzene", "HCH_gamma", "Heptachlor.Epoxide", "Dieldrin", "Endrin", "Total.Chlordane", "Total.DDT", "Dioxin")
+
+for(i in 1:length(Contaminants)) {
+  assign( paste0("dp", i) , contaminantDplot(farmedSalmon, Contaminants[i])) }
+
+ggarrange(dp1, dp2, dp3, dp4, dp5, dp6, dp7, dp8, dp9, common.legend = TRUE)
+```
+
+
+
+
+## cluster analysis
+```{r}
+fviz_nbclust(farmedSalmon[,c(-1,-11)], kmeans, method = "wss")
+```
+
+
+```{r}
+clusterPlot <- function(data, x_var) {
+  clusterName <-  kmeans(scalef1, centers = x_var, nstart = 25)
+  fviz_cluster(clusterName, data, main = str_glue("{x_var} Cluster Plot"), geom = "point") + labs(x=NULL, y=NULL) + theme(plot.title = element_text(hjust = 0.5), legend.title=element_blank(), axis.text = element_text(size = 7)) 
+}
+```
+
+```{r fig.height=8, fig.width=8}
+clusterNo <- c(2,3,4,5)
+scalef1 <- scale(farmedSalmon[,c(-1,-11)])
+
+for(i in 1:length(clusterNo)) {
+  assign( paste0("cluster", clusterNo[i] ) , clusterPlot(farmedSalmon[,c(-1,-11)], clusterNo[i])) }
+
+ggarrange(cluster2, cluster3, cluster4, cluster5, common.legend = F)
+```
+
+
+
+
+##########################
+
+Region 1 - Red 
+Region 2 - Green 
+Region 3 - Blue
+
+theme(legend.position = "none") +
+  theme_classic()
+
+```{r}
+library(scales)
+show_col(hue_pal()(3))
+```
+
+
+
+```{r fig.height=6, fig.width=6}
+set.seed(30) #i set the seed so that the colors match up with other plots as the colors are randomely assigned 
+
+testClust <-  kmeans(scalef1, centers = 3, nstart = 25)
+#fviz_cluster(testClust, farmedSalmon[,c(-1,-11)], main = str_glue("{3} Cluster Plot"), geom = "point", shape = farmedSalmon$Region) + labs(x=NULL, y=NULL)
+ 
+RegionsAndPreds <- data.frame(cbind("ClusterNumber" = testClust$cluster, "Region" = farmedSalmon$Region))
+
+
+testTable = table(testClust$cluster, farmedSalmon$Region)
+testTable
+```
+
+```{r}
+View(RegionsAndPreds)
+```
+
+
+
+LDA analysis
+
+
+```{r}
+fit.lda <- lda(Region~.,data = farmedSalmon )
+```
+
+```{r}
+T1=table(predict(fit.lda, type="class")$class, farmedSalmon$Region)
+T1
+Accuracy1={T1[1,1]+T1[2,2]+T1[3,3]}/sum(T1)
+Accuracy1
+```
+
+
+```{r}
+fit.lda.cv <- lda(Region~.,data = farmedSalmon, CV = TRUE)
+T1=table(fit.lda.cv$class, farmedSalmon$Region)
+T1
+Accuracy2={T1[1,1]+T1[2,2]+T1[3,3]}/sum(T1)
+Accuracy2
+```
+
+```{r}
+
+fit.d <- farmedSalmon[,2:10]  # the data    
+fit.r <- farmedSalmon$Region   # the classes
+head(fit.d)
+set.seed(123)
+sc_obj <- stepclass(fit.d, fit.r, "lda", criterion = "CR")
+sc_obj
+plot(sc_obj)
+
+sc_obj$process
+```
+
+
