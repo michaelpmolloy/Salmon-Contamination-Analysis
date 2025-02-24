@@ -18,7 +18,7 @@ Principle Component Analysis (PCA) is first applied to identify any trends betwe
 
 A continent based PCA shows much better group separation therefore the following analysis is conducted comparing the contamination levels in different continents.
 
-![continent based PCA plot](continentPCAplot.jpg)
+![continent based PCA plot](salmonImages/continentPCAplot.jpg)
 
 Density plots are used to examine the contamination levels present in the different continents. 
 
