@@ -200,7 +200,7 @@ height 340 width = 550
 
 ## cluster analysis
 ```{r}
-optimalClusterPlot <- fviz_nbclust(farmedSalmon[,c(-1,-11)], kmeans, method = "wss") + scale_y_continuous(labels = unit_format(unit = "K", scale = 1e-3)) + labs(x="Cluster No", y="Total WSS") + theme(plot.title = element_text(hjust = 0.5), axis.text = element_text(size = 7), axis.title=element_text(size=8)) 
+optimalClusterPlot <- fviz_nbclust(farmedSalmon[,c(-1,-11)], kmeans, method = "wss") + scale_y_continuous(labels = unit_format(unit = "K", scale = 1e-3)) + labs(x="Cluster No", y="Total WSS") + theme(plot.title = element_blank(), axis.text = element_text(size = 10), axis.title=element_text(size=10)) 
 ggsave("salmonImages/optimalCluster.png", optimalClusterPlot, height = 4, width = 7)
 ```
 
