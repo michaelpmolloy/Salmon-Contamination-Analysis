@@ -42,6 +42,7 @@ library(FactoMineR)
 library(klaR)
 library(stringr)
 library(ggmosaic)
+library(scales)
 ```
 
 
@@ -116,7 +117,7 @@ mapLocations <- data.frame(Locations, Latitude, Longitude, Region)
 
 
 ```{r fig.height=6, fig.width=8}
-ggplot(data = world) +
+salmonMap <- ggplot(data = world) +
     geom_sf(fill = 'antiquewhite') +
     annotation_scale(location = "bl", width_hint = 0.5) +
     coord_sf(xlim = c(-140, 35), ylim = c(-70, 70), expand = FALSE) + 
@@ -126,10 +127,13 @@ ggplot(data = world) +
       size = 7,
       alpha = 0.6)+
     geom_text(data = mapLocations, aes(Longitude, Latitude, label = Locations), size = 2.5) +
-    theme(panel.grid.major = element_line(color = gray(.9), linetype = 'dashed', size = 0.5), panel.background = element_rect(fill = 'aliceblue')) +
+    theme(panel.grid.major = element_line(color = gray(.9), linetype = 'dashed', linewidth = 0.5), plot.title = element_text(hjust = 0.5), panel.background = element_rect(fill = 'aliceblue')) +
     xlab("Longitude") + 
     ylab("Latitude") +
     ggtitle("Salmon farming locations")
+
+
+ggsave("salmonImages/worldmapPlot.png", salmonMap, height = 5, width = 7)
 ```
 The above plot showed significant clustering of the countries geographical locations. As contaminent(pesticide) levels in salmon are mainly due to the environment they are farmed in. The geography/location of the salmon farm should therefore influence the contaminants. Countries geographically close should have similar contamanent levels. 
 
@@ -165,7 +169,7 @@ for (i in 1:150){
 
 ```{r fig.height=7, fig.width=7}
 farmedSalmonPCA = PCA(farmedSalmon[,c(-1,-11)], scale.unit = TRUE, ncp=5, quali.sup = c(1), graph = F)
-continentalPCA <- fviz_pca_ind(farmedSalmonPCA, geom.ind = "point", col.ind = farmedSalmon$Region, addEllipses = TRUE, title= 'Continent PCA') + theme(plot.title = element_text(hjust = 0.5))
+continentalPCA <- fviz_pca_ind(farmedSalmonPCA, geom.ind = "point", col.ind = farmedSalmon$Region, addEllipses = TRUE, title= 'Continent PCA') + theme(plot.title = element_text(hjust = 0.6))
 continentalPCA
 #farmedSalmonPCA$eig
 #farmedSalmonPCA$var
@@ -188,22 +192,29 @@ for(i in 1:length(Contaminants)) {
   assign( paste0("dp", i) , contaminantDplot(farmedSalmon, Contaminants[i])) }
 
 densityGrid <- ggarrange(dp1, dp2, dp3, dp4, dp5, dp6, dp7, dp8, dp9, common.legend = TRUE)
-densityGrid
+ggsave("salmonImages/densityGrid.png", densityGrid, height = 5, width = 7)
 ```
 
 
-
+height 340 width = 550
 
 ## cluster analysis
 ```{r}
-fviz_nbclust(farmedSalmon[,c(-1,-11)], kmeans, method = "wss")
+optimalClusterPlot <- fviz_nbclust(farmedSalmon[,c(-1,-11)], kmeans, method = "wss") + scale_y_continuous(labels = unit_format(unit = "K", scale = 1e-3)) + labs(x="Cluster No", y="Total WSS") + theme(plot.title = element_text(hjust = 0.5), axis.text = element_text(size = 7), axis.title=element_text(size=8)) 
+ggsave("salmonImages/optimalCluster.png", optimalClusterPlot, height = 4, width = 7)
 ```
 
 
+
+
+
+
+
+#Adding name based on cluster number: main = str_glue("{x_var} Cluster Plot")
 ```{r}
 clusterPlot <- function(data, x_var) {
   clusterName <-  kmeans(scalef1, centers = x_var, nstart = 25)
-  fviz_cluster(clusterName, data, main = str_glue("{x_var} Cluster Plot"), geom = "point") + labs(x=NULL, y=NULL) + theme(plot.title = element_text(hjust = 0.5), legend.title=element_blank(), axis.text = element_text(size = 7)) 
+  fviz_cluster(clusterName, data, main = "", geom = "point") + labs(x=NULL, y=NULL) + theme(plot.title = element_text(hjust = 0.5), legend.title=element_blank(), axis.text = element_text(size = 7)) 
 }
 ```
 
@@ -214,7 +225,8 @@ scalef1 <- scale(farmedSalmon[,c(-1,-11)])
 for(i in 1:length(clusterNo)) {
   assign( paste0("cluster", clusterNo[i] ) , clusterPlot(farmedSalmon[,c(-1,-11)], clusterNo[i])) }
 
-ggarrange(cluster2, cluster3, cluster4, cluster5, common.legend = F)
+clusterGrid <- ggarrange(cluster2, cluster3, cluster4, cluster5, common.legend = F)
+ggsave("salmonImages/clusterGrid.png", clusterGrid)
 ```
 
 
@@ -230,7 +242,7 @@ theme(legend.position = "none") +
   theme_classic()
 
 ```{r}
-library(scales)
+
 show_col(hue_pal()(3))
 ```
 
