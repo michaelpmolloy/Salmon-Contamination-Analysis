@@ -25,6 +25,14 @@ Density plots are used to examine the contamination levels present in the differ
 ![grid of contaminant density plots](salmonImages/densityGrid.png)
 
 
+![plot of optimal cluster number](salmonImages/optimalCluster.png)
+
+![grid of cluster plots](salmonImages/clusterGrid.png)
+
+
+
+
+
 ## Tools Used 
 * **R Studio**: Data prep and cleaning, Principal Component Analysis, Cluster Analysis, Linear Discriminant Analysis and visualisation. 
 
