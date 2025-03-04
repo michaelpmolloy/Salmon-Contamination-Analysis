@@ -163,13 +163,13 @@ for (i in 1:150){
 ```
 
 
-```{r fig.height=10, fig.width=10}
+```{r fig.height=7, fig.width=7}
 farmedSalmonPCA = PCA(farmedSalmon[,c(-1,-11)], scale.unit = TRUE, ncp=5, quali.sup = c(1), graph = F)
 continentalPCA <- fviz_pca_ind(farmedSalmonPCA, geom.ind = "point", col.ind = farmedSalmon$Region, addEllipses = TRUE, title= 'Continent PCA') + theme(plot.title = element_text(hjust = 0.5))
 continentalPCA
 #farmedSalmonPCA$eig
 #farmedSalmonPCA$var
-ggsave(continentalPCA, filename = "continentPCAplot.jpg", device = "jpg", height = 8, width = 8)
+ggsave(continentalPCA, filename = "salmonImages/continentPCAplot.jpg", device = "jpg", height = 8, width = 8)
 ```
 
     
@@ -187,7 +187,8 @@ Contaminants = c("Mirex", "Hexachlorobenzene", "HCH_gamma", "Heptachlor.Epoxide"
 for(i in 1:length(Contaminants)) {
   assign( paste0("dp", i) , contaminantDplot(farmedSalmon, Contaminants[i])) }
 
-ggarrange(dp1, dp2, dp3, dp4, dp5, dp6, dp7, dp8, dp9, common.legend = TRUE)
+densityGrid <- ggarrange(dp1, dp2, dp3, dp4, dp5, dp6, dp7, dp8, dp9, common.legend = TRUE)
+densityGrid
 ```
 
 

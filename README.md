@@ -22,6 +22,9 @@ A continent based PCA shows much better group separation therefore the following
 
 Density plots are used to examine the contamination levels present in the different continents. 
 
+![grid of contaminant density plots](salmonImages/densityGrid.png)
+
+
 ## Tools Used 
 * **R Studio**: Data prep and cleaning, Principal Component Analysis, Cluster Analysis, Linear Discriminant Analysis and visualisation. 
 
