@@ -1,15 +1,19 @@
 # Salmon Contamination Analysis
-A comprehensive analysis of contamination levels in farmed salmon from around the world. 
+A comprehensive analysis of contamination levels in farmed salmon from around the world. Contamination levels vary significantly based on the variety and quantity of pesticides used for farming and agriculture in different countries.
 
-The analysis explores the levels on 9 different contaminants and aims to inform both consumers and businesses on regions which produce salmon with the least contaminants. This information is crucial to businesses and consumers as contamination levels in produce such as salmon vary in different regions relating to a regions historic use of different pesticides. The information in this analysis should provide insight into the best regions to source salmon from to reduce the harmful health effects of pesticides in produce. 
+The analysis explores the levels on 9 different contaminants and aims to inform both consumers and businesses on the best global sources of salmon. The best sources of will supply salmon with the least contaminants to reduce the harmful health effects of pesticides in produce. 
+
 
 ## Tools Used 
 * **R Studio**: Data prep and cleaning, Principal Component Analysis, Cluster Analysis, Linear Discriminant Analysis and visualisation. 
 
 
 ## Overview
-The objective of this research is to identify the different degrees of contamination present in salmon from different  farmed globally. 
-
+This analysis contains:
+* Cluster analysis 
+* Spatial analysis
+* Principal Component Analysis (PCA)
+* Density Plots 
 
 ## Analysis 
 
@@ -54,14 +58,10 @@ A continent based PCA shows much better group separation therefore the following
 
 
 
-
-
-
-
 ## Conclusions
 
-* **Cleanest salmon**: The most unpolluted salmon was sourced from South America with most contmamiant levels being close to zero
-* **Most contaminated salmon**: European salmon farmes produced salmon with the highest levels in most contaminants analysed with significantly higher levels of 'Mirex' and 'Dieldrin' and 'Hexachlorobenzene'. 
+* **Cleanest salmon source**: The most unpolluted salmon was sourced from South America with most contmamiant levels being close to zero
+* **Most contaminated salmon source**: European salmon farms produced salmon with the highest levels in most contaminants analysed with significantly higher levels of 'Mirex' and 'Dieldrin' and 'Hexachlorobenzene'. 
 
 
 
@@ -69,7 +69,7 @@ A continent based PCA shows much better group separation therefore the following
 
 ## Details and Acknowledgements
 
-## Dataset
+### Dataset
 
 The “farmedSalmon.csv” data file contains the contamination profiles of 153 salmon from 8 different salmon farms located in Europe, North America and South America.The levels of nine contaminants Mirex, Hexachlorobenzene, HCH gamma, Heptachlor Epoxide, Dieldrin, Endrin, Chlordane, DDT and Dioxin are examined. The salmon samples originate from 8 salmon farms around the world.
 
