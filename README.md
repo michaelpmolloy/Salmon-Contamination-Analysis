@@ -51,7 +51,7 @@ Principle Component Analysis (PCA) is first applied to identify any trends betwe
 ### Density Plots
 
 
-A continent based PCA shows much better group separation therefore the following analysis is conducted comparing the contamination levels in different continents. Density plots are used to examine the contamination levels present in the different continents. 
+A continent based PCA shows much better group separation therefore the following analysis is conducted comparing the contamination levels in different continents. Density plots are used to examine the contamination levels present in the different continents. The visualisation was produced using clean and easily interpretable code which can be found [here] (#density-grid-code)
 
 ![grid of contaminant density plots](salmonImages/densityGrid.png)
 
@@ -75,7 +75,9 @@ The “farmedSalmon.csv” data file contains the contamination profiles of 153 
 
 
 
+### Density grid code 
 
+![code to produce grid of contaminant density plots](salmonImages/densityGridCode.png)
 
 
 
