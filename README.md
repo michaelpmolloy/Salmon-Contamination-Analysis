@@ -15,8 +15,7 @@ This analysis contains:
 * Principal Component Analysis (PCA)
 * Density Plots 
 
-## Analysis 
-
+## Cluster analysis 
 ### Elbow plot
 
 The data was first analysed to check for any grouping in the data through the use of an elbow plot. The optimal number of clusters was found using an elbow plot which plots the "Total within sum of squares" (Total WSS)  against the cluster number as shown below. The Total WSS refers to the sum of  squared differences between each point in a data set and the mean of it's respective group. As the plot shows a steep descent until 3 clusters and the addition of a fourth cluster doesn't significantly decrease the total WSS, 3 clusters seems optimal. 
@@ -32,14 +31,14 @@ The cluster number was then checked by plotting cluster plots showing between 2 
 ![grid of cluster plots](salmonImages/clusterGrid.png)
 
 
-### Spatial analysis 
+## Spatial analysis 
 
 The locations of the salmon farmed are then plotted on a world map to identify groups of salmon farms which are geographically close. As shown in the cluster analysis there were 3 distinct groups identified through spatial analysis, being the continents Europe, North America and South America.  
 
 ![salmon farm locations world map](salmonImages/worldmapPlot.png)
 
 
-### Principal Component Analysis 
+## Principal Component Analysis 
 
 Principle Component Analysis (PCA) is first applied to identify any trends between different salmon sources. A country based PCA shows significant overlap between countries of the same continent indicating similarly to the cluster analysis that geographically close salmon farms share similar contaminantion profiles. A continent based PCA was then used to avoid significant overlap between groups in the PCA. As shown below the continient based PCA had less overlap 
 
@@ -47,8 +46,9 @@ Principle Component Analysis (PCA) is first applied to identify any trends betwe
 ![continent based PCA plot](salmonImages/continentPCAplot.jpg)
 
 
+## Individual contaminant analysis 
 
-### Contaminant Density Plots
+### Density Plots
 
 
 A continent based PCA shows much better group separation therefore the following analysis is conducted comparing the contamination levels in different continents. Density plots are used to examine the contamination levels present in the different continents. 
